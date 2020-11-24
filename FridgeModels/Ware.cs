@@ -13,7 +13,8 @@ namespace FridgeModels
         [ForeignKey("Waretype")] public int Barcode { get; set; }
         public Waretype Waretype { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime DateAdded { get; set; }
+        public int OwnerId { get; set; }
 
 
         public Ware()
@@ -21,19 +22,20 @@ namespace FridgeModels
 
         }
 
-        public Ware(int id, int barcode, Waretype waretype, DateTime date)
+
+        public Ware(int id, int barcode, Waretype waretype, DateTime dateAdded, int ownerId)
         {
             Id = id;
             Barcode = barcode;
             Waretype = waretype;
-            Date = date;
+            DateAdded = dateAdded;
+            OwnerId = ownerId;
         }
+
 
         public override string ToString()
         {
-            return $"Id: {Id}, Barcode: {Barcode}, Waretype: {Waretype}, Date: {Date}";
+            return $"Id: {Id}, Barcode: {Barcode}, Waretype: {Waretype}, DateAdded: {DateAdded}, OwnerId: {OwnerId}";
         }
-
-
     }
 }
