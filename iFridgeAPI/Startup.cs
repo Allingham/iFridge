@@ -88,6 +88,8 @@ namespace iFridgeAPI
 
             app.UseCors();
 
+            
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
