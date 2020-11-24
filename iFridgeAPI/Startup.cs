@@ -86,7 +86,7 @@ namespace iFridgeAPI
 
             app.UseAuthorization();
 
-            app.UseCors();
+            app.UseCors("AllowAnyOrigin");
 
             
 
