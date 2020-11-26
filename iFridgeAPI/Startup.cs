@@ -84,11 +84,9 @@ namespace iFridgeAPI
 
             app.UseRouting();
 
-            app.UseAuthorization();
-
             app.UseCors("AllowAnyOrigin");
 
-
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
