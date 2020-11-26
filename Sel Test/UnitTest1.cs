@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -24,6 +26,8 @@ namespace Sel_Test
         [TestMethod]
         public void TestAdd()
         {
+
+
             IWebElement inputBarcode = driver.FindElement(By.Id("barcodeInput"));
             inputBarcode.Clear();
             inputBarcode.SendKeys("1000008");
@@ -49,6 +53,8 @@ namespace Sel_Test
             Inputpicture.Clear();
             Inputpicture.SendKeys("");
 
+            Thread.Sleep(5000);
+
             IWebElement AddButton = driver.FindElement(By.Id("add"));
             AddButton.Click();
 
@@ -56,7 +62,42 @@ namespace Sel_Test
 
         }
 
+        [TestMethod]
+        public void TestDelete()
+        {
+            IWebElement inputBarcode = driver.FindElement(By.Id("barcodeInput"));
+            inputBarcode.Clear();
+            inputBarcode.SendKeys("1000008");
 
+            IWebElement InputName = driver.FindElement(By.Id("nameInput"));
+            InputName.Clear();
+            InputName.SendKeys("Vegansk Pizza");
+
+            IWebElement InputCategori = driver.FindElement(By.Id("categoriInput"));
+            InputCategori.Clear();
+            InputCategori.SendKeys("Skrald");
+
+            IWebElement InputexpirationDate = driver.FindElement(By.Id("expirationDateInput"));
+            InputexpirationDate.Clear();
+            InputexpirationDate.SendKeys("2");
+
+            IWebElement Inputweight = driver.FindElement(By.Id("weightInput"));
+            Inputweight.Clear();
+            Inputweight.SendKeys("100");
+
+
+            IWebElement Inputpicture = driver.FindElement(By.Id("pictureInput"));
+            Inputpicture.Clear();
+            Inputpicture.SendKeys("");
+
+            Thread.Sleep(5000);
+
+            IWebElement AddButton = driver.FindElement(By.Id("add"));
+            AddButton.Click();
+
+            Thread.Sleep(5000);
+
+        }
 
 
         [TestMethod]
@@ -92,6 +133,8 @@ namespace Sel_Test
             Thread.Sleep(1000);
 
         }
+
+
 
         [TestCleanup]
         public void TestOfCleanUp()
