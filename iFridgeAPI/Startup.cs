@@ -33,7 +33,7 @@ namespace iFridgeAPI
 
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowAnyOrigin", builder => builder.AllowAnyOrigin());
+                options.AddPolicy("AllowAnyOrigin", builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
                 options.AddPolicy("AllowMyLocalOrigin", builder => builder.WithOrigins("http://localhost:3000"));
                 options.AddPolicy("AllowGetPost", builder => builder.AllowAnyOrigin().WithMethods("GET", "POST"));
             });
