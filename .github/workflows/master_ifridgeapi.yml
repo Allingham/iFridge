@@ -18,7 +18,7 @@ jobs:
     - name: Set up .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '3.1.102'
+        dotnet-version: '5.0.x'
 
     - name: Build with dotnet
       run: dotnet build --configuration Release
@@ -31,5 +31,5 @@ jobs:
       with:
         app-name: 'ifridgeapi'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_2d148da1e5eb48fe973bc82679f68852 }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_1f25d267d47f400c9ff969dcd55216f1 }}
         package: ${{env.DOTNET_ROOT}}/myapp 
