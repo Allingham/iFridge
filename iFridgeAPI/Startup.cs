@@ -30,6 +30,7 @@ namespace iFridgeAPI
         {
             services.AddDbContext<ContextWaretype>(options => options.UseSqlServer(Configuration.GetConnectionString("DBContext")));
             services.AddDbContext<ContextWare>(options => options.UseSqlServer(Configuration.GetConnectionString("DBContext")));
+            services.AddDbContext<V2DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DBContext")));
 
             services.AddCors(options =>
             {
