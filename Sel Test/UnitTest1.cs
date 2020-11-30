@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
@@ -12,7 +13,7 @@ namespace Sel_Test
     public class UnitTest1
     {
 
-        private const string URL = "http://localhost:3000/";
+        private const string URL = "http://ifrigdeproject.azurewebsites.net/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
@@ -68,6 +69,7 @@ namespace Sel_Test
             IWebElement inputBarcode = driver.FindElement(By.Id("barcodeInput"));
             inputBarcode.Clear();
             inputBarcode.SendKeys("1000008");
+
 
             IWebElement InputName = driver.FindElement(By.Id("nameInput"));
             InputName.Clear();
@@ -134,6 +136,18 @@ namespace Sel_Test
 
         }
 
+        [TestMethod]
+        public void TestExperationDate()
+        {
+            //får fat i "getAll" knappen og klikker på den
+            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
+            getAllButtonElement.Click();
+
+            //vi får fat i et element i listen af objekter og tjekker om den har et udråbstegn (hvis den er True er der IKKE et udråbstegn)
+            IWebElement cell = driver.FindElement(By.ClassName("expirationList"));
+            Assert.AreEqual(true, cell);
+
+        }
 
 
         [TestCleanup]
