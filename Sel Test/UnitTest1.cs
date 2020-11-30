@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
@@ -137,11 +138,58 @@ namespace Sel_Test
         }
 
 
+        [TestMethod]
+        public void TestExpirationNotification()
+        {
+            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
+            getAllButtonElement.Click();
+
+            Thread.Sleep(3000);
+
+            var cell = driver.FindElements(By.Id("expirationColumn")).First();
+
+
+            Assert.AreEqual("2", cell.Text);
+
+
+
+        }
+
+        [TestMethod]
+        public void TestExpirationPic()
+        {
+
+            //catagoryName : Kød
+            //productName : Rosa Kylling 7% Fedt.
+            //subCatagory : Kylling
+            //expirationPic: Displayed
+
+            //Sætter get all inventory button op og klikker på den
+            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
+            getAllButtonElement.Click();
+            Thread.Sleep(5000);
+
+            try
+            {
+                Assert.IsTrue(driver.FindElement(By.XPath("/html/body/div[2]/div[3]/table/tbody/tr[1]/td[7]/img")).Displayed);
+                
+            }
+            catch (Exception e)
+            {
+                throw;
+            }
+
+            
+
+
+        }
 
         [TestCleanup]
         public void TestOfCleanUp()
         {
             driver.Close();
         }
+
+
     }
 }
