@@ -9,7 +9,7 @@ namespace FridgeModels{
         [ForeignKey("Product")] public int Barcode{ get; set; }
         public Product Product{ get; set; }
         public DateTime DateAdded{ get; set; }
-
+        
         public ProductInstance(){
             
         }

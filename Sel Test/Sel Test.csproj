@@ -17,4 +17,9 @@
     <PackageReference Include="Selenium.WebDriver.ChromeDriver" Version="87.0.4280.2000" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FridgeModels\FridgeModels.csproj" />
+    <ProjectReference Include="..\PiConsumer\PiConsumer.csproj" />
+  </ItemGroup>
+
 </Project>
