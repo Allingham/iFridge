@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
@@ -13,7 +12,7 @@ namespace Sel_Test
     public class UnitTest1
     {
         // TODO Virker på local, ikke på azure da DB værdierne er ændret.
-        private const string URL = "http://localhost:3000/";
+        private const string URL = "https://ifridgeapp.azurewebsites.net/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
@@ -82,19 +81,19 @@ namespace Sel_Test
 
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
-            var objektListStart = driver.FindElements(By.Id("ProductList"));
+            var objektListStart = driver.FindElements(By.Id("Table1"));
             var startresult = objektListStart.Count;
 
+            var deleteRowButton = driver.FindElements(By.Id("deleteButton"));
+            for (int i = 0; i < deleteRowButton.Count; i++)
+            {
+                deleteRowButton[i + 1].Click();
+                break;
+            }
 
 
-            IWebElement deteteButton = driver.FindElement(By.Id("deleteButton"));
-            deteteButton.Click();
-
-
-
-
-
-            var objektListEnd = driver.FindElements(By.Id("ProductList"));
+            getAllButtonElement.Click();
+            var objektListEnd = driver.FindElements(By.Id("Table1"));
             var Endresult = objektListEnd.Count;
             Assert.IsTrue(startresult > Endresult);
 
@@ -113,11 +112,6 @@ namespace Sel_Test
 
             //sætter alle sort buttons op
             IWebElement barcodeButtonElement = driver.FindElement(By.Id("barcodeButton"));
-            IWebElement wareNameButtonElement = driver.FindElement(By.Id("wareNameButton"));
-            IWebElement expirationDatButtonElement = driver.FindElement(By.Id("expirationDateButton"));
-            IWebElement categoryButtonElement = driver.FindElement(By.Id("categoryButton"));
-            IWebElement weightButtonElement = driver.FindElement(By.Id("weightButton"));
-
 
 
             Thread.Sleep(3000);
@@ -138,58 +132,11 @@ namespace Sel_Test
         }
 
 
-        [TestMethod]
-        public void TestExpirationNotification()
-        {
-            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
-            getAllButtonElement.Click();
-
-            Thread.Sleep(3000);
-
-            var cell = driver.FindElements(By.Id("expirationColumn")).First();
-
-
-            Assert.AreEqual("2", cell.Text);
-
-
-
-        }
-
-        [TestMethod]
-        public void TestExpirationPic()
-        {
-
-            //catagoryName : Kød
-            //productName : Rosa Kylling 7% Fedt.
-            //subCatagory : Kylling
-            //expirationPic: Displayed
-
-            //Sætter get all inventory button op og klikker på den
-            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
-            getAllButtonElement.Click();
-            Thread.Sleep(5000);
-
-            try
-            {
-                Assert.IsTrue(driver.FindElement(By.XPath("/html/body/div[2]/div[3]/table/tbody/tr[1]/td[7]/img")).Displayed);
-                
-            }
-            catch (Exception e)
-            {
-                throw;
-            }
-
-            
-
-
-        }
 
         [TestCleanup]
         public void TestOfCleanUp()
         {
             driver.Close();
         }
-
-
     }
 }
