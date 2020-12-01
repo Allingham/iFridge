@@ -12,7 +12,7 @@ namespace Sel_Test
     public class UnitTest1
     {
         // TODO Virker på local, ikke på azure da DB værdierne er ændret.
-        private const string URL = "http://localhost:3000/";
+        private const string URL = "https://ifridgeapp.azurewebsites.net/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
@@ -81,19 +81,19 @@ namespace Sel_Test
 
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
-            var objektListStart = driver.FindElements(By.Id("ProductList"));
+            var objektListStart = driver.FindElements(By.Id("Table1"));
             var startresult = objektListStart.Count;
 
+            var deleteRowButton = driver.FindElements(By.Id("deleteButton"));
+            for (int i = 0; i < deleteRowButton.Count; i++)
+            {
+                deleteRowButton[i + 1].Click();
+                break;
+            }
 
 
-            IWebElement deteteButton = driver.FindElement(By.Id("deleteButton"));
-            deteteButton.Click();
-
-
-
-
-
-            var objektListEnd = driver.FindElements(By.Id("ProductList"));
+            getAllButtonElement.Click();
+            var objektListEnd = driver.FindElements(By.Id("Table1"));
             var Endresult = objektListEnd.Count;
             Assert.IsTrue(startresult > Endresult);
 
@@ -112,11 +112,6 @@ namespace Sel_Test
 
             //sætter alle sort buttons op
             IWebElement barcodeButtonElement = driver.FindElement(By.Id("barcodeButton"));
-            IWebElement wareNameButtonElement = driver.FindElement(By.Id("wareNameButton"));
-            IWebElement expirationDatButtonElement = driver.FindElement(By.Id("expirationDateButton"));
-            IWebElement categoryButtonElement = driver.FindElement(By.Id("categoryButton"));
-            IWebElement weightButtonElement = driver.FindElement(By.Id("weightButton"));
-
 
 
             Thread.Sleep(3000);
