@@ -78,24 +78,28 @@ namespace Sel_Test
         [TestMethod]
         public void TestDelete()
         {
-
+            //Henter alle vores objekter i vores table.
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
-            var objektListStart = driver.FindElements(By.Id("Table1"));
+
+            Thread.Sleep(2000);
+
+            //Tæller hvor mange objekter der er i vores table
+            IList<IWebElement> objektListStart = driver.FindElements(By.Id("TableRows"));
             var startresult = objektListStart.Count;
 
+            //Sætter vores delete knap op derefter klikker på den første delete knap vores table
             var deleteRowButton = driver.FindElements(By.Id("deleteButton"));
-            for (int i = 0; i < deleteRowButton.Count; i++)
-            {
-                deleteRowButton[i + 1].Click();
-                break;
-            }
+            deleteRowButton[0].Click();
+            Thread.Sleep(1000);
 
-
+            //Opdater vores table
             getAllButtonElement.Click();
-            var objektListEnd = driver.FindElements(By.Id("Table1"));
+            IList<IWebElement> objektListEnd = driver.FindElements(By.Id("TableRows"));
             var Endresult = objektListEnd.Count;
-            Assert.IsTrue(startresult > Endresult);
+
+            //Nu ser vi om der er færrer objekter i vores table end før
+            Assert.IsTrue(startresult == Endresult + 1);
 
             Thread.Sleep(5000);
 
