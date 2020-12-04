@@ -12,14 +12,17 @@ using PiConsumer;
 namespace Sel_Test
 {
     [TestClass]
-    public class PiConsumerTest{
+    public class PiConsumerTest
+    {
 
         [TestMethod]
-        public void TestReceive(){
+        public void TestReceive()
+        {
             //arrange
             int number = 999;
 
-            new Task(() => {
+            new Task(() =>
+            {
                 UdpClient sender = new UdpClient(0);
                 sender.EnableBroadcast = true;
 
@@ -27,7 +30,7 @@ namespace Sel_Test
                 //IPEndPoint broadEndPoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"),9000);
                 IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, 9050);
 
-                
+
 
                 while (true)
                 {
@@ -37,7 +40,7 @@ namespace Sel_Test
                     Thread.Sleep(10);
                 }
             }).Start();
-            
+
             IPAddress anyIpAddress = IPAddress.Any;
             IPEndPoint remoteEndPoint = new IPEndPoint(anyIpAddress, 9050);
             UdpClient server = new UdpClient(9050);
