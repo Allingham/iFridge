@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +15,7 @@ namespace Sel_Test
     [TestClass]
     public class UnitTest1
     {
-        // TODO Virker på local, ikke på azure da DB værdierne er ændret.
+        // TODO Virker pï¿½ local, ikke pï¿½ azure da DB vï¿½rdierne er ï¿½ndret.
         private const string URL = "https://ifridgeapp.azurewebsites.net/";
         //private const string URL = "http://localhost:3000/";
         ChromeOptions options = new ChromeOptions();
@@ -38,7 +38,7 @@ namespace Sel_Test
             var startresult = objektListStart.Count;
 
 
-            //Indtaster alle værdierne og trykker på opret
+            //Indtaster alle vï¿½rdierne og trykker pï¿½ opret
             IWebElement inputBarcode = driver.FindElement(By.Id("barcodeInput"));
             inputBarcode.Clear();
             inputBarcode.SendKeys("1000008");
@@ -47,9 +47,13 @@ namespace Sel_Test
             InputName.Clear();
             InputName.SendKeys("Vegansk Pizza");
 
-            IWebElement InputCategori = driver.FindElement(By.Id("categoriInput"));
-            InputCategori.Clear();
-            InputCategori.SendKeys("Skrald");
+            IWebElement selectElement = driver.FindElement(By.TagName("select"));
+            var selectObject = new SelectElement(selectElement);
+            selectObject.SelectByValue("");
+
+            //IWebElement InputCategori = driver.FindElement(By.Id("categoriInput"));
+            //InputCategori.Clear();
+            //InputCategori.SendKeys("Skrald");
 
             IWebElement InputexpirationDate = driver.FindElement(By.Id("expirationDateInput"));
             InputexpirationDate.Clear();
@@ -93,15 +97,15 @@ namespace Sel_Test
             Thread.Sleep(2000);
 
 
-            //Sort listen så den kan slette første element i listen
+            //Sort listen sï¿½ den kan slette fï¿½rste element i listen
             IWebElement sort = driver.FindElement(By.Id("barcodeButton"));
             sort.Click();
 
-            //Tæller hvor mange objekter der er i vores table
+            //Tï¿½ller hvor mange objekter der er i vores table
             IList<IWebElement> objektListStart = driver.FindElements(By.Id("TableRows"));
             var startresult = objektListStart.Count;
 
-            //Sætter vores delete knap op derefter klikker på den første delete knap vores table
+            //Sï¿½tter vores delete knap op derefter klikker pï¿½ den fï¿½rste delete knap vores table
             var deleteRowButton = driver.FindElements(By.Id("deleteButton"));
             deleteRowButton[0].Click();
             Thread.Sleep(1000);
@@ -111,7 +115,7 @@ namespace Sel_Test
             IList<IWebElement> objektListEnd = driver.FindElements(By.Id("TableRows"));
             var Endresult = objektListEnd.Count;
 
-            //Nu ser vi om der er færrer objekter i vores table end før
+            //Nu ser vi om der er fï¿½rrer objekter i vores table end fï¿½r
             Assert.IsTrue(startresult == Endresult + 1);
 
             Thread.Sleep(5000);
@@ -125,18 +129,18 @@ namespace Sel_Test
 
 
             Thread.Sleep(3000);
-            //Sætter get all inventory button op og klikker på den
+            //Sï¿½tter get all inventory button op og klikker pï¿½ den
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
 
-            //sætter alle sort buttons op
+            //sï¿½tter alle sort buttons op
             IWebElement barcodeButtonElement = driver.FindElement(By.Id("barcodeButton"));
 
             Thread.Sleep(3000);
             IWebElement cell = driver.FindElement(By.ClassName("barcodeList"));
 
 
-            //Klikker på hver af knapperne
+            //Klikker pï¿½ hver af knapperne
             Thread.Sleep(2000);
             //Tester om den sorter efter barcode
             barcodeButtonElement.Click();
@@ -161,18 +165,18 @@ namespace Sel_Test
             //Giver programmet tid til at finde select elementet
             Thread.Sleep(2000);
 
-            //Vælger det element på index 1es plads
+            //Vï¿½lger det element pï¿½ index 1es plads
             selectElement.SelectByIndex(1);
 
             Thread.Sleep(2000);
 
-            //Vælger element på index 1es plads
+            //Vï¿½lger element pï¿½ index 1es plads
             var optionsElement = driver.FindElements(By.TagName("option"));
             var result = optionsElement[1];
 
             Thread.Sleep(2000);
 
-            //Ser på om det element på index 1es plads er valgt
+            //Ser pï¿½ om det element pï¿½ index 1es plads er valgt
             Assert.IsTrue(result.Selected);
 
 
@@ -181,23 +185,23 @@ namespace Sel_Test
         [TestMethod]
         public void ExpireNotificationTest()
         {
-            //Henter Listen ved at trykke på "Get List"-knappen.
+            //Henter Listen ved at trykke pï¿½ "Get List"-knappen.
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
 
-            //Vente tid for at sikrer at den har hentet data da vi skal lave test på indholdet af listen.
+            //Vente tid for at sikrer at den har hentet data da vi skal lave test pï¿½ indholdet af listen.
             Thread.Sleep(3000);
 
             //Vi tager objekter fra listen og propper i en liste.
             var objektListExpDate = driver.FindElements(By.ClassName("expirationList"));
             var objektListWarning = driver.FindElements(By.ClassName("expirationStatus"));
 
-            //Vi tæller antallet af elementer i hver liste som opfylder krav
+            //Vi tï¿½ller antallet af elementer i hver liste som opfylder krav
             int warningsCount = 0;
             int expDateValue = 0;
 
             //Her finder vi alle de elementer hvor advarsels billedet er vist istedet for teksten som burde ske hvor der er alarm for at
-            //der er mindre end 3 dage til udløbsdato.
+            //der er mindre end 3 dage til udlï¿½bsdato.
             foreach (var Element in objektListWarning)
             {
                 try
@@ -215,7 +219,7 @@ namespace Sel_Test
                 }
             }
 
-            //Her finder vi alle de elementer hvor udløbsdato er lig med 3 eller mindre.
+            //Her finder vi alle de elementer hvor udlï¿½bsdato er lig med 3 eller mindre.
             foreach (var Element in objektListExpDate)
             {
                 try
@@ -231,7 +235,7 @@ namespace Sel_Test
                     expDateValue++;
                 }
             }
-            //Endeligt ser vi på om der er ligemange advarsels billeder vist som der er værdier under grænseværdien på 3(da denne test blev lavet).
+            //Endeligt ser vi pï¿½ om der er ligemange advarsels billeder vist som der er vï¿½rdier under grï¿½nsevï¿½rdien pï¿½ 3(da denne test blev lavet).
             Assert.AreEqual(warningsCount, expDateValue);
         }
 
