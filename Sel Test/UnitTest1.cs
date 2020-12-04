@@ -91,6 +91,11 @@ namespace Sel_Test
 
             Thread.Sleep(2000);
 
+
+            //Sort listen så den kan slette første element i listen
+            IWebElement sort = driver.FindElement(By.Id("barcodeButton"));
+            sort.Click();
+
             //Tæller hvor mange objekter der er i vores table
             IList<IWebElement> objektListStart = driver.FindElements(By.Id("TableRows"));
             var startresult = objektListStart.Count;
@@ -116,7 +121,6 @@ namespace Sel_Test
         [TestMethod]
         public void TestOfSort()
         {
-            ProductPoster.PostProductInstance(1);
 
 
             Thread.Sleep(3000);
@@ -137,8 +141,6 @@ namespace Sel_Test
             barcodeButtonElement.Click();
             Assert.AreEqual("1", cell.Text);
             Thread.Sleep(2000);
-
-            ProductPoster.PostProductInstance(99999999);
 
             //Tester om den reverse sorter efter barcode
             barcodeButtonElement.Click();
