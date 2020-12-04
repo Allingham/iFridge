@@ -1,19 +1,21 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using PiConsumer;
 
 namespace Sel_Test
 {
     [TestClass]
     public class UnitTest1
     {
-        // TODO Virker på local, ikke på azure da DB værdierne er ændret.
+        // TODO Virker pï¿½ local, ikke pï¿½ azure da DB vï¿½rdierne er ï¿½ndret.
         private const string URL = "https://ifridgeapp.azurewebsites.net/";
         //private const string URL = "http://localhost:3000/";
         ChromeOptions options = new ChromeOptions();
@@ -36,7 +38,7 @@ namespace Sel_Test
             var startresult = objektListStart.Count;
 
 
-            //Indtaster alle værdierne og trykker på opret
+            //Indtaster alle vï¿½rdierne og trykker pï¿½ opret
             IWebElement inputBarcode = driver.FindElement(By.Id("barcodeInput"));
             inputBarcode.Clear();
             inputBarcode.SendKeys("1000008");
@@ -85,17 +87,25 @@ namespace Sel_Test
         [TestMethod]
         public void TestDelete()
         {
+            ProductPoster.PostProductInstance(1);
+
+
             //Henter alle vores objekter i vores table.
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
 
             Thread.Sleep(2000);
 
-            //Tæller hvor mange objekter der er i vores table
+
+            //Sort listen sï¿½ den kan slette fï¿½rste element i listen
+            IWebElement sort = driver.FindElement(By.Id("barcodeButton"));
+            sort.Click();
+
+            //Tï¿½ller hvor mange objekter der er i vores table
             IList<IWebElement> objektListStart = driver.FindElements(By.Id("TableRows"));
             var startresult = objektListStart.Count;
 
-            //Sætter vores delete knap op derefter klikker på den første delete knap vores table
+            //Sï¿½tter vores delete knap op derefter klikker pï¿½ den fï¿½rste delete knap vores table
             var deleteRowButton = driver.FindElements(By.Id("deleteButton"));
             deleteRowButton[0].Click();
             Thread.Sleep(1000);
@@ -105,7 +115,7 @@ namespace Sel_Test
             IList<IWebElement> objektListEnd = driver.FindElements(By.Id("TableRows"));
             var Endresult = objektListEnd.Count;
 
-            //Nu ser vi om der er færrer objekter i vores table end før
+            //Nu ser vi om der er fï¿½rrer objekter i vores table end fï¿½r
             Assert.IsTrue(startresult == Endresult + 1);
 
             Thread.Sleep(5000);
@@ -116,63 +126,118 @@ namespace Sel_Test
         [TestMethod]
         public void TestOfSort()
         {
+
+
             Thread.Sleep(3000);
-            //Sætter get all inventory button op og klikker på den
+            //Sï¿½tter get all inventory button op og klikker pï¿½ den
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
 
-            //sætter alle sort buttons op
+            //sï¿½tter alle sort buttons op
             IWebElement barcodeButtonElement = driver.FindElement(By.Id("barcodeButton"));
 
-
             Thread.Sleep(3000);
-            IWebElement cell = driver.FindElement(By.ClassName("barcodeNumber"));
+            IWebElement cell = driver.FindElement(By.ClassName("barcodeList"));
 
 
-            //Klikker på hver af knapperne
+            //Klikker pï¿½ hver af knapperne
             Thread.Sleep(2000);
             //Tester om den sorter efter barcode
             barcodeButtonElement.Click();
             Assert.AreEqual("1", cell.Text);
             Thread.Sleep(2000);
+
             //Tester om den reverse sorter efter barcode
             barcodeButtonElement.Click();
-            Assert.AreEqual("12345678", cell.Text);
+            Assert.AreEqual("99999999", cell.Text);
             Thread.Sleep(1000);
+
+
+
+        }
+        [TestMethod]
+        public void DropDownSubCategoryTest()
+        {
+            //Finder vores select element
+            var Category = driver.FindElement(By.TagName("select"));
+            SelectElement selectElement = new SelectElement(Category);
+
+            //Giver programmet tid til at finde select elementet
+            Thread.Sleep(2000);
+
+            //Vï¿½lger det element pï¿½ index 1es plads
+            selectElement.SelectByIndex(1);
+
+            Thread.Sleep(2000);
+
+            //Vï¿½lger element pï¿½ index 1es plads
+            var optionsElement = driver.FindElements(By.TagName("option"));
+            var result = optionsElement[1];
+
+            Thread.Sleep(2000);
+
+            //Ser pï¿½ om det element pï¿½ index 1es plads er valgt
+            Assert.IsTrue(result.Selected);
+
 
         }
 
         [TestMethod]
-        public void DropDownSubCategoryTest()
+        public void ExpireNotificationTest()
         {
-            //Her får vi fat på Dropdown elementet (gennem id fra HTML side)
-            IWebElement selectSubCategoryDropdown = driver.FindElement(By.Id("subCategoryDropdown"));
+            //Henter Listen ved at trykke pï¿½ "Get List"-knappen.
+            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
+            getAllButtonElement.Click();
 
-            //her får vi fat i vores dropdown muligheder
-            SelectElement selectSubCategory = new SelectElement(selectSubCategoryDropdown);
+            //Vente tid for at sikrer at den har hentet data da vi skal lave test pï¿½ indholdet af listen.
+            Thread.Sleep(3000);
 
-            //her får jeg fat i alle muligheder og smider dem i en liste
-            IList<IWebElement> elements = selectSubCategory.Options;
+            //Vi tager objekter fra listen og propper i en liste.
+            var objektListExpDate = driver.FindElements(By.ClassName("expirationList"));
+            var objektListWarning = driver.FindElements(By.ClassName("expirationStatus"));
 
-            //her tæller jeg hvor mange muligheder subCategory der i i listen
-            int elementsSize = elements.Count;
+            //Vi tï¿½ller antallet af elementer i hver liste som opfylder krav
+            int warningsCount = 0;
+            int expDateValue = 0;
 
-            //her får jeg fat i vores table med alle subcategory elementer fra vores DB
-            var objektListEnd = driver.FindElements(By.Id("SubCategoryList"));
-            //Her tæller jeg listen
-            var subCategoryCount = objektListEnd.Count;
+            //Her finder vi alle de elementer hvor advarsels billedet er vist istedet for teksten som burde ske hvor der er alarm for at
+            //der er mindre end 3 dage til udlï¿½bsdato.
+            foreach (var Element in objektListWarning)
+            {
+                try
+                {
 
-            //selve testen der sammenligner de 2 antal fra table og fra category options
-            Assert.AreEqual(elementsSize, subCategoryCount);
+                    if (Element.Text != "Varen er stadig god")
+                    {
+                        warningsCount++;
+                    }
+                }
+                catch (System.FormatException e)
+                {
+                    Console.WriteLine(e);
+                    warningsCount++;
+                }
+            }
 
-
-            //Her får jeg fat på et det første element inden i cubCategoryListen
-            var cell = driver.FindElements(By.Id("subCategoryColumn")).First();
-            //her tjekker jeg at valuen af første element er hvad jeg forventer
-            Assert.AreEqual("Mælk", cell.Text);
-
+            //Her finder vi alle de elementer hvor udlï¿½bsdato er lig med 3 eller mindre.
+            foreach (var Element in objektListExpDate)
+            {
+                try
+                {
+                    if (Element.Text == "3" || Element.Text == "2" || Element.Text == "1" || Element.Text == "0")
+                    {
+                        expDateValue++;
+                    }
+                }
+                catch (System.FormatException e)
+                {
+                    Console.WriteLine(e);
+                    expDateValue++;
+                }
+            }
+            //Endeligt ser vi pï¿½ om der er ligemange advarsels billeder vist som der er vï¿½rdier under grï¿½nsevï¿½rdien pï¿½ 3(da denne test blev lavet).
+            Assert.AreEqual(warningsCount, expDateValue);
         }
-
 
         [TestCleanup]
         public void TestOfCleanUp()
