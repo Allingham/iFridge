@@ -174,6 +174,62 @@ namespace Sel_Test
 
         }
 
+        [TestMethod]
+        public void ExpireNotificationTest()
+        {
+            //Henter Listen ved at trykke på "Get List"-knappen.
+            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
+            getAllButtonElement.Click();
+
+            //Vente tid for at sikrer at den har hentet data da vi skal lave test på indholdet af listen.
+            Thread.Sleep(3000);
+
+            //Vi tager objekter fra listen og propper i en liste.
+            var objektListExpDate = driver.FindElements(By.ClassName("expirationList"));
+            var objektListWarning = driver.FindElements(By.ClassName("expirationStatus"));
+
+            //Vi tæller antallet af elementer i hver liste som opfylder krav
+            int warningsCount = 0;
+            int expDateValue = 0;
+
+            //Her finder vi alle de elementer hvor advarsels billedet er vist istedet for teksten som burde ske hvor der er alarm for at
+            //der er mindre end 3 dage til udløbsdato.
+            foreach (var Element in objektListWarning)
+            {
+                try
+                {
+                    
+                    if (Element.Text != "Varen er stadig god")
+                    {
+                        warningsCount++;
+                    }
+                }
+                catch (System.FormatException e)
+                {
+                    Console.WriteLine(e);
+                    warningsCount++;
+                }
+            }
+
+            //Her finder vi alle de elementer hvor udløbsdato er lig med 3 eller mindre.
+            foreach (var Element in objektListExpDate)
+            {
+                try
+                {
+                    if (Element.Text =="3" || Element.Text == "2" || Element.Text == "1" || Element.Text == "0")
+                    {
+                        expDateValue++;
+                    }
+                }
+                catch (System.FormatException e)
+                {
+                    Console.WriteLine(e);
+                    expDateValue++;
+                }
+            }
+            //Endeligt ser vi på om der er ligemange advarsels billeder vist som der er værdier under grænseværdien på 3(da denne test blev lavet).
+            Assert.AreEqual(warningsCount, expDateValue);
+        }
 
         [TestCleanup]
         public void TestOfCleanUp()
