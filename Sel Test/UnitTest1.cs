@@ -2,11 +2,13 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using PiConsumer;
 
 namespace Sel_Test
 {
@@ -80,11 +82,19 @@ namespace Sel_Test
         [TestMethod]
         public void TestDelete()
         {
+            ProductPoster.PostProductInstance(1);
+
+
             //Henter alle vores objekter i vores table.
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
 
             Thread.Sleep(2000);
+
+
+            //Sort listen så den kan slette første element i listen
+            IWebElement sort = driver.FindElement(By.Id("barcodeButton"));
+            sort.Click();
 
             //Tæller hvor mange objekter der er i vores table
             IList<IWebElement> objektListStart = driver.FindElements(By.Id("TableRows"));
@@ -111,6 +121,8 @@ namespace Sel_Test
         [TestMethod]
         public void TestOfSort()
         {
+
+
             Thread.Sleep(3000);
             //Sætter get all inventory button op og klikker på den
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
@@ -119,9 +131,8 @@ namespace Sel_Test
             //sætter alle sort buttons op
             IWebElement barcodeButtonElement = driver.FindElement(By.Id("barcodeButton"));
 
-
             Thread.Sleep(3000);
-            IWebElement cell = driver.FindElement(By.ClassName("barcodeNumber"));
+            IWebElement cell = driver.FindElement(By.ClassName("barcodeList"));
 
 
             //Klikker på hver af knapperne
@@ -130,10 +141,13 @@ namespace Sel_Test
             barcodeButtonElement.Click();
             Assert.AreEqual("1", cell.Text);
             Thread.Sleep(2000);
+
             //Tester om den reverse sorter efter barcode
             barcodeButtonElement.Click();
-            Assert.AreEqual("12345678", cell.Text);
+            Assert.AreEqual("99999999", cell.Text);
             Thread.Sleep(1000);
+
+
 
         }
 
