@@ -1,26 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Text;
 using FridgeModels;
+using Newtonsoft.Json;
 
 namespace PiConsumer
 {
     public static class ProductPoster
     {
 
-        public static bool PostPorductInstance(int barcode){
+        public static HttpResponseMessage PostProductInstance(int barcode){
 
-            throw new NotImplementedException();
+            //string ProductInstanceEndPoint = "https://ifridgeapi.azurewebsites.net/api/ProductInsta";
+            string ProductInstanceEndPoint = "https://ifridgeapi.azurewebsites.net/api/ProductInstances";
 
-            ProductInstance newInstance = new ProductInstance(){
+            ProductInstance newInstance = new ProductInstance()
+            {
                 Barcode = barcode,
                 DateAdded = DateTime.Now,
                 OwnerId = 0
             };
-
             
+            using (HttpClient client = new HttpClient())
+            {
+                string ProductInstanceString = JsonConvert.SerializeObject(newInstance);
+
+                Console.WriteLine(ProductInstanceString);
+
+                StringContent content = new StringContent(ProductInstanceString, Encoding.UTF8, "application/json");
+
+
+
+                HttpResponseMessage response = client.PostAsync(ProductInstanceEndPoint, content).Result;
+
+                Console.WriteLine(response);
+
+                return response;
+            }
+
 
         }
 

@@ -57,10 +57,10 @@ namespace Sel_Test
         public void TestPost()
         {
             //arrange
-            int barcode = 999;
+            int barcode = 10000001;
 
             //act + assert
-            Assert.IsTrue(ProductPoster.PostPorductInstance(barcode));
+            Assert.AreEqual(ProductPoster.PostProductInstance(barcode).StatusCode, HttpStatusCode.Created);
 
 
 
