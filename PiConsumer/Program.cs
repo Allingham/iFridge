@@ -8,8 +8,11 @@ namespace PiConsumer
     {
         static void Main(string[] args)
         {
+            IPAddress anyIpAddress = IPAddress.Any;
+            IPEndPoint remoteEndPoint = new IPEndPoint(anyIpAddress, 9050);
+            UdpClient server = new UdpClient(9050);
 
-            
+            Console.WriteLine(ProductPoster.UDPToBarcode(server, remoteEndPoint));
 
         }
     }

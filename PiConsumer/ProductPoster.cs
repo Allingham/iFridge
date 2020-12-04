@@ -24,7 +24,7 @@ namespace PiConsumer
 
         }
 
-        public static int ListenForNewProduct(UdpClient listener, IPEndPoint remoteEndPoint){
+        public static string ListenForNewProduct(UdpClient listener, IPEndPoint remoteEndPoint){
             //Byte[] receivedBytes = server.Receive(ref remoteEndPoint);
             Byte[] receivedBytes = listener.Receive(ref remoteEndPoint);
 
@@ -33,13 +33,37 @@ namespace PiConsumer
 
             Console.WriteLine(receivedData);
 
-            int recievedInt;
+            //int recievedInt;
 
-            Int32.TryParse(receivedData, out recievedInt);
+            //Int32.TryParse(receivedData, out recievedInt);
 
-            if (recievedInt == null) throw new ArgumentOutOfRangeException();
+            //if (recievedInt == null) throw new ArgumentOutOfRangeException();
 
-            return recievedInt;
+            //return recievedInt;
+
+            return receivedData;
+        }
+
+        public static int UDPToBarcode(UdpClient listener, IPEndPoint remoteEndPoint)
+        {
+
+            string msg = "";
+            string barcode = "";
+
+            while (msg != "#"){
+                int barcodeNr = 0;
+                msg = ListenForNewProduct(listener, remoteEndPoint);
+                if (Int32.TryParse(msg, out barcodeNr)){
+                    barcode = barcode + barcodeNr;
+                }
+
+            }
+
+            int barcodeOut;
+            if (!Int32.TryParse(barcode, out barcodeOut)) throw new Exception("Kunne ikke læse tallet");
+
+            return barcodeOut;
+            //throw new NotImplementedException();
         }
 
     }
