@@ -16,8 +16,8 @@ namespace Sel_Test
     public class UnitTest1
     {
         // TODO Virker p� local, ikke p� azure da DB v�rdierne er �ndret.
-        private const string URL = "https://ifridgeapp.azurewebsites.net/";
-        //private const string URL = "http://localhost:3000/";
+        //private const string URL = "https://ifridgeapp.azurewebsites.net/";
+        private const string URL = "http://localhost:3000/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
@@ -31,29 +31,27 @@ namespace Sel_Test
         [TestMethod]
         public void TestAdd()
         {
-            //Henter Listen og checker indholdet i hvormange elementer der er i
-            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
+            //Henter Listen og checker indholdet i hvor mange elementer der er i
+            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllProductsButton"));
             getAllButtonElement.Click();
-            var objektListStart = driver.FindElements(By.Id("ProductList"));
+            Thread.Sleep(2000);
+            var objektListStart = driver.FindElements(By.Id("debugList"));
+            Thread.Sleep(1000);
             var startresult = objektListStart.Count;
 
 
-            //Indtaster alle v�rdierne og trykker p� opret
+            //Indtaster alle værdierne og trykker på opret
             IWebElement inputBarcode = driver.FindElement(By.Id("barcodeInput"));
             inputBarcode.Clear();
-            inputBarcode.SendKeys("1000008");
+            inputBarcode.SendKeys("1008");
 
             IWebElement InputName = driver.FindElement(By.Id("nameInput"));
             InputName.Clear();
-            InputName.SendKeys("Vegansk Pizza");
+            InputName.SendKeys("Pizza");
 
-            IWebElement selectElement = driver.FindElement(By.TagName("select"));
+            var selectElement = driver.FindElement(By.TagName("select"));
             var selectObject = new SelectElement(selectElement);
-            selectObject.SelectByValue("");
-
-            //IWebElement InputCategori = driver.FindElement(By.Id("categoriInput"));
-            //InputCategori.Clear();
-            //InputCategori.SendKeys("Skrald");
+            selectObject.SelectByIndex(2);
 
             IWebElement InputexpirationDate = driver.FindElement(By.Id("expirationDateInput"));
             InputexpirationDate.Clear();
@@ -68,17 +66,24 @@ namespace Sel_Test
             Inputpicture.Clear();
             Inputpicture.SendKeys("");
 
-            Thread.Sleep(5000);
+            Thread.Sleep(2000);
 
             IWebElement AddButton = driver.FindElement(By.Id("add"));
             AddButton.Click();
 
+
             Thread.Sleep(5000);
 
 
-            //Checker hvormange elementer der i listen efter man har oprettet
-            var objektListEnd = driver.FindElements(By.Id("ProductList"));
+            getAllButtonElement.Click();
+            Thread.Sleep(2000);
+
+            //Checker hvor mange elementer der er i listen efter man har oprettet
+            var objektListEnd = driver.FindElements(By.Id("debugList"));
+            Thread.Sleep(2000);
             var Endresult = objektListEnd.Count;
+            Thread.Sleep(2000);
+
             Assert.IsTrue(startresult < Endresult);
 
 
