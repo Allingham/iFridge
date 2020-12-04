@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 
 namespace Sel_Test
 {
@@ -12,7 +14,7 @@ namespace Sel_Test
     public class UnitTest1
     {
         // TODO Virker på local, ikke på azure da DB værdierne er ændret.
-        private const string URL = "http://localhost:3000/";
+        private const string URL = "https://ifridgeapp.azurewebsites.net/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
@@ -78,24 +80,28 @@ namespace Sel_Test
         [TestMethod]
         public void TestDelete()
         {
-
+            //Henter alle vores objekter i vores table.
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
-            var objektListStart = driver.FindElements(By.Id("ProductList"));
+
+            Thread.Sleep(2000);
+
+            //Tæller hvor mange objekter der er i vores table
+            IList<IWebElement> objektListStart = driver.FindElements(By.Id("TableRows"));
             var startresult = objektListStart.Count;
 
+            //Sætter vores delete knap op derefter klikker på den første delete knap vores table
+            var deleteRowButton = driver.FindElements(By.Id("deleteButton"));
+            deleteRowButton[0].Click();
+            Thread.Sleep(1000);
 
-
-            IWebElement deteteButton = driver.FindElement(By.Id("deleteButton"));
-            deteteButton.Click();
-
-
-
-
-
-            var objektListEnd = driver.FindElements(By.Id("ProductList"));
+            //Opdater vores table
+            getAllButtonElement.Click();
+            IList<IWebElement> objektListEnd = driver.FindElements(By.Id("TableRows"));
             var Endresult = objektListEnd.Count;
-            Assert.IsTrue(startresult > Endresult);
+
+            //Nu ser vi om der er færrer objekter i vores table end før
+            Assert.IsTrue(startresult == Endresult + 1);
 
             Thread.Sleep(5000);
 
@@ -112,11 +118,6 @@ namespace Sel_Test
 
             //sætter alle sort buttons op
             IWebElement barcodeButtonElement = driver.FindElement(By.Id("barcodeButton"));
-            IWebElement wareNameButtonElement = driver.FindElement(By.Id("wareNameButton"));
-            IWebElement expirationDatButtonElement = driver.FindElement(By.Id("expirationDateButton"));
-            IWebElement categoryButtonElement = driver.FindElement(By.Id("categoryButton"));
-            IWebElement weightButtonElement = driver.FindElement(By.Id("weightButton"));
-
 
 
             Thread.Sleep(3000);
@@ -136,6 +137,35 @@ namespace Sel_Test
 
         }
 
+        public void DropDownSubCategoryTest()
+        {
+            //Her får vi fat på Dropdown elementet (gennem id fra HTML side)
+            IWebElement selectSubCategoryDropdown = driver.FindElement(By.Id("subCategoryDropdown"));
+
+            //her får vi fat i vores dropdown muligheder
+            SelectElement selectSubCategory = new SelectElement(selectSubCategoryDropdown);
+
+            //her får jeg fat i alle muligheder og smider dem i en liste
+            IList<IWebElement> elements = selectSubCategory.Options;
+
+            //her tæller jeg hvor mange muligheder subCategory der i i listen
+            int elementsSize = elements.Count;
+
+            //her får jeg fat i vores table med alle subcategory elementer fra vores DB
+            var objektListEnd = driver.FindElements(By.Id("SubCategoryList"));
+            //Her tæller jeg listen
+            var subCategoryCount = objektListEnd.Count;
+
+            //selve testen der sammenligner de 2 antal fra table og fra category options
+            Assert.AreEqual(elementsSize, subCategoryCount);
+
+
+            //Her får jeg fat på et det første element inden i cubCategoryListen
+            var cell = driver.FindElements(By.Id("subCategoryColumn")).First();
+            //her tjekker jeg at valuen af første element er hvad jeg forventer
+            Assert.AreEqual("Mælk", cell.Text);
+
+        }
 
 
         [TestCleanup]
