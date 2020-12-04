@@ -18,8 +18,15 @@ namespace PiConsumer
             IPEndPoint remoteEndPoint = new IPEndPoint(anyIpAddress, 9050);
             UdpClient server = new UdpClient(9050);
 
-            Console.WriteLine(ProductPoster.UDPToBarcode(server, remoteEndPoint));
+            while (true) { 
 
+                int barcode = ProductPoster.UDPToBarcode(server, remoteEndPoint);
+
+                Console.WriteLine(barcode);
+
+                ProductPoster.PostProductInstance(barcode);
+
+            }
         }
     }
 }

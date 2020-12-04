@@ -71,7 +71,7 @@ namespace PiConsumer
             string barcode = "";
 
             while (msg != "#"){
-                int barcodeNr = 0;
+                int barcodeNr;
                 msg = ListenForNewProduct(listener, remoteEndPoint);
                 if (Int32.TryParse(msg, out barcodeNr)){
                     barcode = barcode + barcodeNr;
