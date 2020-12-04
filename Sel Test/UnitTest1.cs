@@ -16,7 +16,8 @@ namespace Sel_Test
     public class UnitTest1
     {
         // TODO Virker på local, ikke på azure da DB værdierne er ændret.
-        private const string URL = "https://ifridgeapp.azurewebsites.net/";
+        //private const string URL = "https://ifridgeapp.azurewebsites.net/";
+        private const string URL = "http://localhost:3000/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
@@ -150,34 +151,26 @@ namespace Sel_Test
 
 
         }
-
+        [TestMethod]
         public void DropDownSubCategoryTest()
         {
-            //Her får vi fat på Dropdown elementet (gennem id fra HTML side)
-            IWebElement selectSubCategoryDropdown = driver.FindElement(By.Id("subCategoryDropdown"));
 
-            //her får vi fat i vores dropdown muligheder
-            SelectElement selectSubCategory = new SelectElement(selectSubCategoryDropdown);
+            var Category = driver.FindElement(By.TagName("select"));
+            SelectElement selectElement = new SelectElement(Category);
 
-            //her får jeg fat i alle muligheder og smider dem i en liste
-            IList<IWebElement> elements = selectSubCategory.Options;
+            Thread.Sleep(2000);
 
-            //her tæller jeg hvor mange muligheder subCategory der i i listen
-            int elementsSize = elements.Count;
+            selectElement.SelectByIndex(1);
 
-            //her får jeg fat i vores table med alle subcategory elementer fra vores DB
-            var objektListEnd = driver.FindElements(By.Id("SubCategoryList"));
-            //Her tæller jeg listen
-            var subCategoryCount = objektListEnd.Count;
+            Thread.Sleep(2000);
 
-            //selve testen der sammenligner de 2 antal fra table og fra category options
-            Assert.AreEqual(elementsSize, subCategoryCount);
+            var optionsElement = driver.FindElements(By.TagName("option"));
+            var result = optionsElement[1];
 
+            Thread.Sleep(2000);
 
-            //Her får jeg fat på et det første element inden i cubCategoryListen
-            var cell = driver.FindElements(By.Id("subCategoryColumn")).First();
-            //her tjekker jeg at valuen af første element er hvad jeg forventer
-            Assert.AreEqual("Mælk", cell.Text);
+            Assert.IsTrue(result.Selected);
+
 
         }
 
