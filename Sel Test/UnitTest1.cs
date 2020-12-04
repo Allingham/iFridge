@@ -16,8 +16,8 @@ namespace Sel_Test
     public class UnitTest1
     {
         // TODO Virker på local, ikke på azure da DB værdierne er ændret.
-        //private const string URL = "https://ifridgeapp.azurewebsites.net/";
-        private const string URL = "http://localhost:3000/";
+        private const string URL = "https://ifridgeapp.azurewebsites.net/";
+        //private const string URL = "http://localhost:3000/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
@@ -154,21 +154,25 @@ namespace Sel_Test
         [TestMethod]
         public void DropDownSubCategoryTest()
         {
-
+            //Finder vores select element
             var Category = driver.FindElement(By.TagName("select"));
             SelectElement selectElement = new SelectElement(Category);
 
+            //Giver programmet tid til at finde select elementet
             Thread.Sleep(2000);
 
+            //Vælger det element på index 1es plads
             selectElement.SelectByIndex(1);
 
             Thread.Sleep(2000);
 
+            //Vælger element på index 1es plads
             var optionsElement = driver.FindElements(By.TagName("option"));
             var result = optionsElement[1];
 
             Thread.Sleep(2000);
 
+            //Ser på om det element på index 1es plads er valgt
             Assert.IsTrue(result.Selected);
 
 
@@ -198,7 +202,7 @@ namespace Sel_Test
             {
                 try
                 {
-                    
+
                     if (Element.Text != "Varen er stadig god")
                     {
                         warningsCount++;
@@ -216,7 +220,7 @@ namespace Sel_Test
             {
                 try
                 {
-                    if (Element.Text =="3" || Element.Text == "2" || Element.Text == "1" || Element.Text == "0")
+                    if (Element.Text == "3" || Element.Text == "2" || Element.Text == "1" || Element.Text == "0")
                     {
                         expDateValue++;
                     }
