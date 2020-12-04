@@ -15,6 +15,7 @@ namespace Sel_Test
     {
         // TODO Virker på local, ikke på azure da DB værdierne er ændret.
         private const string URL = "https://ifridgeapp.azurewebsites.net/";
+        //private const string URL = "http://localhost:3000/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
@@ -44,9 +45,9 @@ namespace Sel_Test
             InputName.Clear();
             InputName.SendKeys("Vegansk Pizza");
 
-            IWebElement InputCategori = driver.FindElement(By.Id("categoriInput"));
-            InputCategori.Clear();
-            InputCategori.SendKeys("Skrald");
+            //IWebElement InputCategori = driver.FindElement(By.Id("categoriInput"));
+            //InputCategori.Clear();
+            //InputCategori.SendKeys("Skrald");
 
             IWebElement InputexpirationDate = driver.FindElement(By.Id("expirationDateInput"));
             InputexpirationDate.Clear();
@@ -137,6 +138,7 @@ namespace Sel_Test
 
         }
 
+        [TestMethod]
         public void DropDownSubCategoryTest()
         {
             //Her får vi fat på Dropdown elementet (gennem id fra HTML side)
