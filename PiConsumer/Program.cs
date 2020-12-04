@@ -14,16 +14,12 @@ namespace PiConsumer
     {
         static void Main(string[] args)
         {
-
             IPAddress anyIpAddress = IPAddress.Any;
             IPEndPoint remoteEndPoint = new IPEndPoint(anyIpAddress, 9050);
             UdpClient server = new UdpClient(9050);
 
-            while (true)
-            {
-                Console.WriteLine("Listening for new product");
-                ProductPoster.PostProductInstance(ProductPoster.ListenForNewProduct(server,remoteEndPoint));
-            }
+            Console.WriteLine(ProductPoster.UDPToBarcode(server, remoteEndPoint));
+
         }
     }
 }
