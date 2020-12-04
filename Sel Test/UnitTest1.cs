@@ -45,6 +45,10 @@ namespace Sel_Test
             InputName.Clear();
             InputName.SendKeys("Vegansk Pizza");
 
+            IWebElement selectElement = driver.FindElement(By.TagName("select"));
+            var selectObject = new SelectElement(selectElement);
+            selectObject.SelectByValue("");
+
             //IWebElement InputCategori = driver.FindElement(By.Id("categoriInput"));
             //InputCategori.Clear();
             //InputCategori.SendKeys("Skrald");
