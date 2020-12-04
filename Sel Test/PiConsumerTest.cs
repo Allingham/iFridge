@@ -27,14 +27,18 @@ namespace Sel_Test
                 //IPEndPoint broadEndPoint = new IPEndPoint(IPAddress.Parse("255.255.255.255"),9000);
                 IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Broadcast, 9050);
 
-                
+                Thread.Sleep(2000);
 
-                while (true)
-                {
+                while (true){
+                    number = 1;
+                    
                     Byte[] sendBytes = Encoding.ASCII.GetBytes(number.ToString());
                     sender.Send(sendBytes, sendBytes.Length, remoteEndPoint);
 
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
+
+                    sendBytes = Encoding.ASCII.GetBytes("#");
+                    sender.Send(sendBytes, sendBytes.Length, remoteEndPoint);
                 }
             }).Start();
             
@@ -45,11 +49,13 @@ namespace Sel_Test
             //act
             int receivedNumber = 0;
 
-            receivedNumber = ProductPoster.ListenForNewProduct(server, remoteEndPoint);
+            Assert.AreEqual(ProductPoster.UDPToBarcode(server,remoteEndPoint), 1);
+
+            //receivedNumber = ProductPoster.ListenForNewProduct(server, remoteEndPoint);
 
             //assert
 
-            Assert.AreEqual(number, receivedNumber);
+            //Assert.AreEqual(number, receivedNumber);
 
         }
 
