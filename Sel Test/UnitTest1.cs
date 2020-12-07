@@ -244,6 +244,33 @@ namespace Sel_Test
             Assert.AreEqual(warningsCount, expDateValue);
         }
 
+
+        [TestMethod]
+        public void getRecipe()
+        {
+            // text felt hvor man søger opskrift 
+            //få en list af indgridienser der skal bruges til opskrift
+            //indgridienser jeg mangler skal være røde eller have en notifikation ud for
+
+            IWebElement recipeinput = driver.FindElement(By.Id("recipeInput"));
+            recipeinput.Clear();
+            recipeinput.SendKeys("butter");
+
+            IWebElement cell = driver.FindElement(By.ClassName("recipeList"));
+            Assert.AreEqual("Butter-Bread", cell.Text);
+
+
+            //tjekke om vi har indgridenten i vores køleskab
+
+            cell.Click();
+            IList<IWebElement> IngeredientList = driver.FindElements(By.Id("ingredients"));
+            var textColor = IngeredientList[0].GetAttribute("textColor");
+            Assert.AreEqual("Red", textColor);
+
+
+
+        }
+
         [TestCleanup]
         public void TestOfCleanUp()
         {
