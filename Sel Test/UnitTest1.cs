@@ -254,20 +254,23 @@ namespace Sel_Test
 
             IWebElement recipeinput = driver.FindElement(By.Id("recipeInput"));
             recipeinput.Clear();
-            recipeinput.SendKeys("butter");
+            recipeinput.SendKeys("pasta");
+            IWebElement getRecipesButton = driver.FindElement(By.Id("getRecipes"));
 
+            getRecipesButton.Click();
+            Thread.Sleep(2000);
             IWebElement cell = driver.FindElement(By.ClassName("recipeList"));
-            Assert.AreEqual("Butter-Bread", cell.Text);
+            Assert.AreEqual("Pasta With Tuna", cell.Text);
 
 
             //tjekke om vi har indgridenten i vores køleskab
 
             cell.Click();
-            IList<IWebElement> IngeredientList = driver.FindElements(By.Id("ingredients"));
-            var textColor = IngeredientList[0].GetAttribute("textColor");
-            Assert.AreEqual("Red", textColor);
 
-
+            Thread.Sleep(2000);
+            IList<IWebElement> IngredientList = driver.FindElements(By.Id("IngredientList"));
+            var textColor = IngredientList[0].GetAttribute("style");
+            Assert.AreEqual("color: rgb(255, 0, 0);", textColor);
 
         }
 
