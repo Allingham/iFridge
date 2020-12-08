@@ -1,17 +1,22 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using PiConsumer;
 
 namespace Sel_Test
 {
     [TestClass]
     public class UnitTest1
     {
-        // TODO Virker på local, ikke på azure da DB værdierne er ændret.
+        // TODO Virker pï¿½ local, ikke pï¿½ azure da DB vï¿½rdierne er ï¿½ndret.
+        //private const string URL = "https://ifridgeapp.azurewebsites.net/";
         private const string URL = "http://localhost:3000/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
@@ -26,25 +31,27 @@ namespace Sel_Test
         [TestMethod]
         public void TestAdd()
         {
-            //Henter Listen og checker indholdet i hvormange elementer der er i
-            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
+            //Henter Listen og checker indholdet i hvor mange elementer der er i
+            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllProductsButton"));
             getAllButtonElement.Click();
-            var objektListStart = driver.FindElements(By.Id("ProductList"));
+            Thread.Sleep(2000);
+            var objektListStart = driver.FindElements(By.Id("debugList"));
+            Thread.Sleep(1000);
             var startresult = objektListStart.Count;
 
 
-            //Indtaster alle værdierne og trykker på opret
+            //Indtaster alle vÃ¦rdierne og trykker pÃ¥ opret
             IWebElement inputBarcode = driver.FindElement(By.Id("barcodeInput"));
             inputBarcode.Clear();
-            inputBarcode.SendKeys("1000008");
+            inputBarcode.SendKeys("1008");
 
             IWebElement InputName = driver.FindElement(By.Id("nameInput"));
             InputName.Clear();
-            InputName.SendKeys("Vegansk Pizza");
+            InputName.SendKeys("Pizza");
 
-            IWebElement InputCategori = driver.FindElement(By.Id("categoriInput"));
-            InputCategori.Clear();
-            InputCategori.SendKeys("Skrald");
+            var selectElement = driver.FindElement(By.TagName("select"));
+            var selectObject = new SelectElement(selectElement);
+            selectObject.SelectByIndex(2);
 
             IWebElement InputexpirationDate = driver.FindElement(By.Id("expirationDateInput"));
             InputexpirationDate.Clear();
@@ -59,17 +66,24 @@ namespace Sel_Test
             Inputpicture.Clear();
             Inputpicture.SendKeys("");
 
-            Thread.Sleep(5000);
+            Thread.Sleep(2000);
 
             IWebElement AddButton = driver.FindElement(By.Id("add"));
             AddButton.Click();
 
+
             Thread.Sleep(5000);
 
 
-            //Checker hvormange elementer der i listen efter man har oprettet
-            var objektListEnd = driver.FindElements(By.Id("ProductList"));
+            getAllButtonElement.Click();
+            Thread.Sleep(2000);
+
+            //Checker hvor mange elementer der er i listen efter man har oprettet
+            var objektListEnd = driver.FindElements(By.Id("debugList"));
+            Thread.Sleep(2000);
             var Endresult = objektListEnd.Count;
+            Thread.Sleep(2000);
+
             Assert.IsTrue(startresult < Endresult);
 
 
@@ -78,24 +92,36 @@ namespace Sel_Test
         [TestMethod]
         public void TestDelete()
         {
+            ProductPoster.PostProductInstance(1);
 
+
+            //Henter alle vores objekter i vores table.
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
-            var objektListStart = driver.FindElements(By.Id("ProductList"));
+
+            Thread.Sleep(2000);
+
+
+            //Sort listen sï¿½ den kan slette fï¿½rste element i listen
+            IWebElement sort = driver.FindElement(By.Id("barcodeButton"));
+            sort.Click();
+
+            //Tï¿½ller hvor mange objekter der er i vores table
+            IList<IWebElement> objektListStart = driver.FindElements(By.Id("TableRows"));
             var startresult = objektListStart.Count;
 
+            //Sï¿½tter vores delete knap op derefter klikker pï¿½ den fï¿½rste delete knap vores table
+            var deleteRowButton = driver.FindElements(By.Id("deleteButton"));
+            deleteRowButton[0].Click();
+            Thread.Sleep(1000);
 
-
-            IWebElement deteteButton = driver.FindElement(By.Id("deleteButton"));
-            deteteButton.Click();
-
-
-
-
-
-            var objektListEnd = driver.FindElements(By.Id("ProductList"));
+            //Opdater vores table
+            getAllButtonElement.Click();
+            IList<IWebElement> objektListEnd = driver.FindElements(By.Id("TableRows"));
             var Endresult = objektListEnd.Count;
-            Assert.IsTrue(startresult > Endresult);
+
+            //Nu ser vi om der er fï¿½rrer objekter i vores table end fï¿½r
+            Assert.IsTrue(startresult == Endresult + 1);
 
             Thread.Sleep(5000);
 
@@ -105,38 +131,148 @@ namespace Sel_Test
         [TestMethod]
         public void TestOfSort()
         {
+
+
             Thread.Sleep(3000);
-            //Sætter get all inventory button op og klikker på den
+            //Sï¿½tter get all inventory button op og klikker pï¿½ den
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
 
-            //sætter alle sort buttons op
+            //sï¿½tter alle sort buttons op
             IWebElement barcodeButtonElement = driver.FindElement(By.Id("barcodeButton"));
-            IWebElement wareNameButtonElement = driver.FindElement(By.Id("wareNameButton"));
-            IWebElement expirationDatButtonElement = driver.FindElement(By.Id("expirationDateButton"));
-            IWebElement categoryButtonElement = driver.FindElement(By.Id("categoryButton"));
-            IWebElement weightButtonElement = driver.FindElement(By.Id("weightButton"));
-
-
 
             Thread.Sleep(3000);
-            IWebElement cell = driver.FindElement(By.ClassName("barcodeNumber"));
+            IWebElement cell = driver.FindElement(By.ClassName("barcodeList"));
 
 
-            //Klikker på hver af knapperne
+            //Klikker pï¿½ hver af knapperne
             Thread.Sleep(2000);
             //Tester om den sorter efter barcode
             barcodeButtonElement.Click();
             Assert.AreEqual("1", cell.Text);
             Thread.Sleep(2000);
+
             //Tester om den reverse sorter efter barcode
             barcodeButtonElement.Click();
-            Assert.AreEqual("12345678", cell.Text);
+            Assert.AreEqual("99999999", cell.Text);
             Thread.Sleep(1000);
+
+
+
+        }
+        [TestMethod]
+        public void DropDownSubCategoryTest()
+        {
+            //Finder vores select element
+            var Category = driver.FindElement(By.TagName("select"));
+            SelectElement selectElement = new SelectElement(Category);
+
+            //Giver programmet tid til at finde select elementet
+            Thread.Sleep(2000);
+
+            //Vï¿½lger det element pï¿½ index 1es plads
+            selectElement.SelectByIndex(1);
+
+            Thread.Sleep(2000);
+
+            //Vï¿½lger element pï¿½ index 1es plads
+            var optionsElement = driver.FindElements(By.TagName("option"));
+            var result = optionsElement[1];
+
+            Thread.Sleep(2000);
+
+            //Ser pï¿½ om det element pï¿½ index 1es plads er valgt
+            Assert.IsTrue(result.Selected);
+
 
         }
 
+        [TestMethod]
+        public void ExpireNotificationTest()
+        {
+            //Henter Listen ved at trykke pï¿½ "Get List"-knappen.
+            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
+            getAllButtonElement.Click();
 
+            //Vente tid for at sikrer at den har hentet data da vi skal lave test pï¿½ indholdet af listen.
+            Thread.Sleep(3000);
+
+            //Vi tager objekter fra listen og propper i en liste.
+            var objektListExpDate = driver.FindElements(By.ClassName("expirationList"));
+            var objektListWarning = driver.FindElements(By.ClassName("expirationStatus"));
+
+            //Vi tï¿½ller antallet af elementer i hver liste som opfylder krav
+            int warningsCount = 0;
+            int expDateValue = 0;
+
+            //Her finder vi alle de elementer hvor advarsels billedet er vist istedet for teksten som burde ske hvor der er alarm for at
+            //der er mindre end 3 dage til udlï¿½bsdato.
+            foreach (var Element in objektListWarning)
+            {
+                try
+                {
+
+                    if (Element.Text != "Varen er stadig god")
+                    {
+                        warningsCount++;
+                    }
+                }
+                catch (System.FormatException e)
+                {
+                    Console.WriteLine(e);
+                    warningsCount++;
+                }
+            }
+
+            //Her finder vi alle de elementer hvor udlï¿½bsdato er lig med 3 eller mindre.
+            foreach (var Element in objektListExpDate)
+            {
+                try
+                {
+                    if (Element.Text == "3" || Element.Text == "2" || Element.Text == "1" || Element.Text == "0")
+                    {
+                        expDateValue++;
+                    }
+                }
+                catch (System.FormatException e)
+                {
+                    Console.WriteLine(e);
+                    expDateValue++;
+                }
+            }
+            //Endeligt ser vi pï¿½ om der er ligemange advarsels billeder vist som der er vï¿½rdier under grï¿½nsevï¿½rdien pï¿½ 3(da denne test blev lavet).
+            Assert.AreEqual(warningsCount, expDateValue);
+        }
+
+
+        [TestMethod]
+        public void getRecipe()
+        {
+            // text felt hvor man sÃ¸ger opskrift 
+            //fÃ¥ en list af indgridienser der skal bruges til opskrift
+            //indgridienser jeg mangler skal vÃ¦re rÃ¸de eller have en notifikation ud for
+
+            IWebElement recipeinput = driver.FindElement(By.Id("recipeInput"));
+            recipeinput.Clear();
+            recipeinput.SendKeys("pasta");
+            IWebElement getRecipesButton = driver.FindElement(By.Id("getRecipes"));
+
+            getRecipesButton.Click();
+            Thread.Sleep(2000);
+            IWebElement cell = driver.FindElement(By.ClassName("recipeList"));
+            Assert.AreEqual("Pasta With Tuna", cell.Text);
+
+
+            //tjekke om vi har indgridenten i vores kÃ¸leskab
+
+            cell.Click();
+
+            Thread.Sleep(2000);
+            IList<IWebElement> IngredientList = driver.FindElements(By.Id("IngredientList"));
+            var textColor = IngredientList[0].GetAttribute("style");
+            Assert.AreEqual("color: rgb(255, 0, 0);", textColor);
+
+        }
 
         [TestMethod]
         public void TestOfCreateShoppingList()
