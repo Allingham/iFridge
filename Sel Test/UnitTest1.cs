@@ -138,6 +138,37 @@ namespace Sel_Test
 
 
 
+        [TestMethod]
+        public void TestOfCreateShoppingList()
+        {
+            var objektListStart = driver.FindElements(By.Id("TableRows2"));
+            var startresult = objektListStart.Count;
+
+
+            IWebElement InsertProductName = driver.FindElement(By.Id("itemName"));
+            InsertProductName.SendKeys("Risengrød på Tube");
+
+            IWebElement InsertShop = driver.FindElement(By.Id("itemPlace"));
+            InsertShop.SendKeys("Fakta");
+
+            IWebElement InsertProductPrice = driver.FindElement(By.Id("itemPrice"));
+            InsertProductPrice.SendKeys("25");
+
+            
+            IWebElement CreateShoppingList = driver.FindElement(By.Id("addToShopping"));
+            CreateShoppingList.Click();
+
+            Thread.Sleep(2000);
+
+            var objektListEnd = driver.FindElements(By.Id("TableRows2"));
+            var Endresult = objektListEnd.Count;
+            Assert.IsTrue(startresult > Endresult);
+
+            Thread.Sleep(5000);
+
+        }
+
+
         [TestCleanup]
         public void TestOfCleanUp()
         {
