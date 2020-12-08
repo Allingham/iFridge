@@ -282,7 +282,7 @@ namespace Sel_Test
 
 
             IWebElement InsertProductName = driver.FindElement(By.Id("itemName"));
-            InsertProductName.SendKeys("Risengrød på Tube");
+            InsertProductName.SendKeys("Risengrï¿½d pï¿½ Tube");
 
             IWebElement InsertShop = driver.FindElement(By.Id("itemPlace"));
             InsertShop.SendKeys("Fakta");
