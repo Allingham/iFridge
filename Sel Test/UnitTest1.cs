@@ -302,8 +302,6 @@ namespace Sel_Test
 
             Thread.Sleep(2000);
 
-            var recipesElement = driver.FindElement(By.XPath("/html/body/div[2]/div[2]/div[1]/ul/li[1]"));
-
             IWebElement InsertAmount = driver.FindElement(By.Id("itemAmount"));
             InsertAmount.SendKeys("2");
             
