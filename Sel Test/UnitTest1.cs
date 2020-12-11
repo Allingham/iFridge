@@ -21,8 +21,8 @@ namespace Sel_Test
     public class UnitTest1
     {
         // TODO Virker p� local, ikke p� azure da DB v�rdierne er �ndret.
-        //private const string URL = "https://ifridgeapp.azurewebsites.net/";
-        private const string URL = "http://localhost:3000/";
+        private const string URL = "https://ifridgeapp.azurewebsites.net/";
+        //private const string URL = "http://localhost:3000/";
         ChromeOptions options = new ChromeOptions();
         IWebDriver driver = new ChromeDriver();
 
