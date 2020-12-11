@@ -14,18 +14,33 @@ namespace PiConsumer
     {
         static void Main(string[] args)
         {
-            IPAddress anyIpAddress = IPAddress.Any;
-            IPEndPoint remoteEndPoint = new IPEndPoint(anyIpAddress, 9050);
-            UdpClient server = new UdpClient(9050);
 
-            while (true) { 
+            bool debugPost = true;
 
-                int barcode = ProductPoster.UDPToBarcode(server, remoteEndPoint);
+            if(debugPost == false) { 
 
-                Console.WriteLine(barcode);
+                IPAddress anyIpAddress = IPAddress.Any;
+                IPEndPoint remoteEndPoint = new IPEndPoint(anyIpAddress, 9050);
+                UdpClient server = new UdpClient(9050);
 
-                ProductPoster.PostProductInstance(barcode);
+                while (true)
+                {
 
+                    int barcode = ProductPoster.UDPToBarcode(server, remoteEndPoint);
+
+                    Console.WriteLine(barcode);
+
+                    ProductPoster.PostProductInstance(barcode);
+                }
+            }
+            else
+            {
+                ProductPoster.PostProductInstance(10000007);
+                ProductPoster.PostProductInstance(69696969);
+                ProductPoster.PostProductInstance(10000005);
+                ProductPoster.PostProductInstance(10000004);
+                ProductPoster.PostProductInstance(10000003);
+                ProductPoster.PostProductInstance(69);
             }
         }
     }
