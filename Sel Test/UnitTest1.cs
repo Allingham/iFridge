@@ -277,28 +277,29 @@ namespace Sel_Test
         [TestMethod]
         public void TestOfCreateShoppingList()
         {
-            var objektListStart = driver.FindElements(By.Id("TableRows2"));
+            var objektListStart = driver.FindElements(By.Id("ShoppingListRows"));
             var startresult = objektListStart.Count;
 
-
-            IWebElement InsertProductName = driver.FindElement(By.Id("itemName"));
-            InsertProductName.SendKeys("Risengr�d p� Tube");
-
-            IWebElement InsertShop = driver.FindElement(By.Id("itemPlace"));
-            InsertShop.SendKeys("Fakta");
-
-            IWebElement InsertProductPrice = driver.FindElement(By.Id("itemPrice"));
-            InsertProductPrice.SendKeys("25");
-
-            
-            IWebElement CreateShoppingList = driver.FindElement(By.Id("addToShopping"));
-            CreateShoppingList.Click();
+            IWebElement getRecipes = driver.FindElement(By.Id("getRecipes"));
+            getRecipes.Click();
 
             Thread.Sleep(2000);
 
-            var objektListEnd = driver.FindElements(By.Id("TableRows2"));
+            var recipesElement = driver.FindElement(By.XPath("/html/body/div[2]/div[2]/div[1]/ul/li[1]"));
+
+            recipesElement.Click();
+
+            Thread.Sleep(2000);
+
+            IWebElement SendToShoppingList = driver.FindElement(By.Id("SendToShoppingList"));
+
+            SendToShoppingList.Click();
+
+            Thread.Sleep(2000);
+
+            var objektListEnd = driver.FindElements(By.Id("ShoppingListRows"));
             var Endresult = objektListEnd.Count;
-            Assert.IsTrue(startresult > Endresult);
+            Assert.IsTrue(startresult < Endresult);
 
             Thread.Sleep(5000);
 
