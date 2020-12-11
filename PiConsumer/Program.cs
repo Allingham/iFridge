@@ -15,7 +15,7 @@ namespace PiConsumer
         static void Main(string[] args)
         {
 
-            bool debugPost = true;
+            bool debugPost = false;
 
             if(debugPost == false) { 
 
@@ -37,9 +37,16 @@ namespace PiConsumer
             {
                 ProductPoster.PostProductInstance(10000007);
                 ProductPoster.PostProductInstance(69696969);
+                ProductPoster.PostProductInstance(69696969);
+                ProductPoster.PostProductInstance(69696969);
+                ProductPoster.PostProductInstance(69696969);
                 ProductPoster.PostProductInstance(10000005);
                 ProductPoster.PostProductInstance(10000004);
                 ProductPoster.PostProductInstance(10000003);
+                ProductPoster.PostProductInstance(69);
+                ProductPoster.PostProductInstance(69);
+                ProductPoster.PostProductInstance(69);
+                ProductPoster.PostProductInstance(69);
                 ProductPoster.PostProductInstance(69);
             }
         }
