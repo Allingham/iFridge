@@ -297,9 +297,12 @@ namespace Sel_Test
             var objektListStart = driver.FindElements(By.Id("ShoppingListRows"));
             var startresult = objektListStart.Count;
 
+            IWebElement getRecipes = driver.FindElement(By.Id("getRecipes"));
+            getRecipes.Click();
 
-            IWebElement InsertProductName = driver.FindElement(By.Id("itemName"));
-            InsertProductName.SendKeys("Risengr�d p� Tube");
+            Thread.Sleep(2000);
+
+            var recipesElement = driver.FindElement(By.XPath("/html/body/div[2]/div[2]/div[1]/ul/li[1]"));
 
             IWebElement InsertAmount = driver.FindElement(By.Id("itemAmount"));
             InsertAmount.SendKeys("2");
