@@ -1,10 +1,15 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
+using FridgeModels;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
@@ -32,12 +37,9 @@ namespace Sel_Test
         public void TestAdd()
         {
             //Henter Listen og checker indholdet i hvor mange elementer der er i
-            IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllProductsButton"));
-            getAllButtonElement.Click();
-            Thread.Sleep(2000);
-            var objektListStart = driver.FindElements(By.Id("debugList"));
-            Thread.Sleep(1000);
-            var startresult = objektListStart.Count;
+
+            IList<Product> listBefore = getList().Result;
+         
 
 
             //Indtaster alle værdierne og trykker på opret
@@ -62,68 +64,86 @@ namespace Sel_Test
             Inputweight.SendKeys("100");
 
 
-            IWebElement Inputpicture = driver.FindElement(By.Id("pictureInput"));
-            Inputpicture.Clear();
-            Inputpicture.SendKeys("");
-
-            Thread.Sleep(2000);
+            Thread.Sleep(200);
 
             IWebElement AddButton = driver.FindElement(By.Id("add"));
             AddButton.Click();
 
 
-            Thread.Sleep(5000);
+            Thread.Sleep(500);
+
+            IList<Product> listAfter = getList().Result;
+
+            Thread.Sleep(500);
+
+            DeleteProduct(1008);    
+
+            Assert.AreEqual(listBefore.Count +1, listAfter.Count);
 
 
-            getAllButtonElement.Click();
-            Thread.Sleep(2000);
+        }
 
-            //Checker hvor mange elementer der er i listen efter man har oprettet
-            var objektListEnd = driver.FindElements(By.Id("debugList"));
-            Thread.Sleep(2000);
-            var Endresult = objektListEnd.Count;
-            Thread.Sleep(2000);
+        private async Task<IList<Product>> getList()
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                string ProductEndPoint = "https://ifridgeapi.azurewebsites.net/api/Products";
+                string content = await client.GetStringAsync(ProductEndPoint);
+                IList<Product> list = JsonConvert.DeserializeObject<IList<Product>>(content);
 
-            Assert.IsTrue(startresult < Endresult);
+                return list;
+            }
+        }
 
+        private async void DeleteProduct(int id) {
+            using (HttpClient client = new HttpClient())
+            {
+                string ProductEndPoint = "https://ifridgeapi.azurewebsites.net/api/Products";
+                await client.DeleteAsync(ProductEndPoint + "/" + id);
 
+            }
         }
 
         [TestMethod]
         public void TestDelete()
         {
             ProductPoster.PostProductInstance(1);
-
+            Thread.Sleep(1000);
 
             //Henter alle vores objekter i vores table.
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
 
-            Thread.Sleep(2000);
-
+            Thread.Sleep(200);
 
             //Sort listen s� den kan slette f�rste element i listen
-            IWebElement sort = driver.FindElement(By.Id("barcodeButton"));
+            IWebElement sort = driver.FindElement(By.Id("dateAdded"));
             sort.Click();
+            Thread.Sleep(200);
+            sort.Click();
+
+            Thread.Sleep(200);
 
             //T�ller hvor mange objekter der er i vores table
             IList<IWebElement> objektListStart = driver.FindElements(By.Id("TableRows"));
             var startresult = objektListStart.Count;
 
+            Thread.Sleep(200);
+
             //S�tter vores delete knap op derefter klikker p� den f�rste delete knap vores table
-            var deleteRowButton = driver.FindElements(By.Id("deleteButton"));
-            deleteRowButton[0].Click();
-            Thread.Sleep(1000);
+            var deleteRowButton = driver.FindElement(By.Id("deleteButton"));
+            deleteRowButton.Click();
+            Thread.Sleep(500);
 
             //Opdater vores table
-            getAllButtonElement.Click();
+            
             IList<IWebElement> objektListEnd = driver.FindElements(By.Id("TableRows"));
             var Endresult = objektListEnd.Count;
 
             //Nu ser vi om der er f�rrer objekter i vores table end f�r
-            Assert.IsTrue(startresult == Endresult + 1);
+            Assert.AreEqual(startresult, Endresult + 1);
 
-            Thread.Sleep(5000);
+           
 
         }
 
@@ -133,29 +153,30 @@ namespace Sel_Test
         {
 
 
-            Thread.Sleep(3000);
+            Thread.Sleep(2000);
             //S�tter get all inventory button op og klikker p� den
             IWebElement getAllButtonElement = driver.FindElement(By.Id("getAllButton"));
             getAllButtonElement.Click();
 
             //s�tter alle sort buttons op
-            IWebElement barcodeButtonElement = driver.FindElement(By.Id("barcodeButton"));
+            IWebElement productNameButtonElement = driver.FindElement(By.Id("productName"));
 
-            Thread.Sleep(3000);
-            IWebElement cell = driver.FindElement(By.ClassName("barcodeList"));
+            Thread.Sleep(200);
+            IWebElement cell = driver.FindElement(By.ClassName("nameList"));
 
 
             //Klikker p� hver af knapperne
             Thread.Sleep(2000);
             //Tester om den sorter efter barcode
-            barcodeButtonElement.Click();
-            Assert.AreEqual("1", cell.Text);
-            Thread.Sleep(2000);
+            productNameButtonElement.Click();
+            Assert.AreEqual("Aalborg Akvavit", cell.Text);
+
+            Thread.Sleep(200);
 
             //Tester om den reverse sorter efter barcode
-            barcodeButtonElement.Click();
-            Assert.AreEqual("99999999", cell.Text);
-            Thread.Sleep(1000);
+            productNameButtonElement.Click();
+            Assert.AreEqual("Økologisk Zucchini", cell.Text);
+           
 
 
 
@@ -212,7 +233,7 @@ namespace Sel_Test
                 try
                 {
 
-                    if (Element.Text != "Varen er stadig god")
+                    if (Element.Text != "THE ITEM IS STILL GOOD")
                     {
                         warningsCount++;
                     }
@@ -227,21 +248,17 @@ namespace Sel_Test
             //Her finder vi alle de elementer hvor udl�bsdato er lig med 3 eller mindre.
             foreach (var Element in objektListExpDate)
             {
-                try
+                double parsedInt;
+                double.TryParse(Element.Text, NumberStyles.AllowDecimalPoint, CultureInfo.CreateSpecificCulture("en-US"), out parsedInt);
+
+                if (parsedInt <= 3.0)
                 {
-                    if (Element.Text == "3" || Element.Text == "2" || Element.Text == "1" || Element.Text == "0")
-                    {
-                        expDateValue++;
-                    }
-                }
-                catch (System.FormatException e)
-                {
-                    Console.WriteLine(e);
                     expDateValue++;
                 }
             }
             //Endeligt ser vi p� om der er ligemange advarsels billeder vist som der er v�rdier under gr�nsev�rdien p� 3(da denne test blev lavet).
             Assert.AreEqual(warningsCount, expDateValue);
+            
         }
 
 
@@ -285,24 +302,19 @@ namespace Sel_Test
 
             Thread.Sleep(2000);
 
-            var recipesElement = driver.FindElement(By.XPath("/html/body/div[2]/div[2]/div[1]/ul/li[1]"));
+            IWebElement InsertAmount = driver.FindElement(By.Id("itemAmount"));
+            InsertAmount.SendKeys("2");
+            
+            IWebElement CreateShoppingList = driver.FindElement(By.Id("addToShopping"));
+            CreateShoppingList.Click();
 
-            recipesElement.Click();
-
-            Thread.Sleep(2000);
-
-            IWebElement SendToShoppingList = driver.FindElement(By.Id("SendToShoppingList"));
-
-            SendToShoppingList.Click();
-
-            Thread.Sleep(2000);
+         
 
             var objektListEnd = driver.FindElements(By.Id("ShoppingListRows"));
             var Endresult = objektListEnd.Count;
-            Assert.IsTrue(startresult < Endresult);
+            Assert.AreEqual(startresult + 1, Endresult);
 
-            Thread.Sleep(5000);
-
+            
         }
 
 
